@@ -74,7 +74,7 @@ namespace Google {
                 }
                 else
                 {
-                    Debug.LogError(GoogleSignInStatusCode.DEVELOPER_ERROR,
+                    Debug.LogWarning(GoogleSignInStatusCode.DEVELOPER_ERROR +
               "DefaultInstance already created. " +
               " Cannot change configuration after creation.");
                 }
