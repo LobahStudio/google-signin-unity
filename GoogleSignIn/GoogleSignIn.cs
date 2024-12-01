@@ -63,28 +63,45 @@ namespace Google {
     ///<remarks> The configuration should be set before calling the sign-in
     /// methods.  Once the configuration is set it cannot be changed.
     ///</remarks>
-    public static GoogleSignInConfiguration Configuration {
-      set {
-        // Can set the configuration until the singleton is created.
-        if (theInstance == null || theConfiguration == value || theConfiguration == null) {
-          theConfiguration = value;
-        } else {
-          throw new SignInException(GoogleSignInStatusCode.DEVELOPER_ERROR,
+    public static GoogleSignInConfiguration Configuration
+        {
+            set
+            {
+                // Can set the configuration until the singleton is created.
+                if (theInstance == null || theConfiguration == value || theConfiguration == null)
+                {
+                    theConfiguration = value;
+                }
+                else
+                {
+                    Debug.LogError(GoogleSignInStatusCode.DEVELOPER_ERROR,
               "DefaultInstance already created. " +
               " Cannot change configuration after creation.");
+                }
+            }
+
+            get
+            {
+                return theConfiguration;
+            }
         }
-      }
+        public void SetConfiguration(GoogleSignInConfiguration _Config)
+        {
+#if UNITY_EDITOR || UNITY_STANDALONE
+          this.impl = new GoogleSignInImplEditor(_Config);
+#elif UNITY_ANDROID || UNITY_IOS
+          this.impl = new GoogleSignInImpl(_Config);
+#else
+            theInstance = new GoogleSignIn(null);
+            throw new SignInException(GoogleSignInStatusCode.DEVELOPER_ERROR, "This platform is not supported by GoogleSignIn");
+#endif
 
-      get {
-        return theConfiguration;
-      }
-    }
-
-    /// <summary>
-    /// Singleton instance of this class.
-    /// </summary>
-    /// <value>The instance.</value>
-    public static GoogleSignIn DefaultInstance {
+        }
+        /// <summary>
+        /// Singleton instance of this class.
+        /// </summary>
+        /// <value>The instance.</value>
+        public static GoogleSignIn DefaultInstance {
       get {
         if (theInstance == null) {
 #if UNITY_EDITOR || UNITY_STANDALONE
